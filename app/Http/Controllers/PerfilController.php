@@ -6,7 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PerfilController extends Controller
 {
@@ -48,12 +49,11 @@ class PerfilController extends Controller
             $imagen = $request->file('image');
 
             $nombreImagen = Str::uuid() . "." . $imagen->extension();
-            $imagenServidor = Image::configure(['driver' => 'imagick']);
-            $imagenServidor = Image::make($imagen);
-            $imagenServidor->fit(1000, 1000);
-
+            $manager = new ImageManager(new Driver());
+            $imagenServidor = $manager::gd()->read($imagen);
+            $imagenServidor->resizeDown(1000, 1000);
             $imagenPath = public_path('profiles') . '/' . $nombreImagen;
-            $imagenServidor->save($imagenPath);
+            $imagenServidor->toPng()->save($imagenPath);
             
         }
         
