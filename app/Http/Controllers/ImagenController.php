@@ -14,7 +14,6 @@ class ImagenController extends Controller
         $imagen = $request->file('file');
 
         $nombreImagen = Str::uuid() . "." . $imagen->extension();
-        $imagenServidor = Image::configure(['driver' => 'imagick']);
         $imagenServidor = Image::make($imagen);
         $imagenServidor->fit(1000, 1000);
 
